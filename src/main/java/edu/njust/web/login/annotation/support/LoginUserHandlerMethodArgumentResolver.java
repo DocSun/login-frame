@@ -1,14 +1,14 @@
 package edu.njust.web.login.annotation.support;
 
 import edu.njust.web.login.annotation.LoginUser;
+import edu.njust.web.login.constant.Parameters;
+import edu.njust.web.login.service.TokenManager;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import java.lang.reflect.Parameter;
-import java.util.Iterator;
 
 public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -21,15 +21,10 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
     @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
 
-        Parameter parameter = methodParameter.getParameter();
-        String name = parameter.getName();
-        System.out.println("name = " + name);
-        System.out.println(methodParameter.getParameter().toString());;
-        System.out.println("enter the login annotation!");
-        Iterator<String> nameIterator = nativeWebRequest.getHeaderNames();
-        while(nameIterator.hasNext()){
-            System.out.println(nameIterator.next());
+        String token = nativeWebRequest.getHeader(Parameters.LOGIN_TOKEN_KEY);
+        if(null == token || token.isEmpty()){
+            return null;
         }
-        return null;
+        return TokenManager.isTokenValid(token);
     }
 }

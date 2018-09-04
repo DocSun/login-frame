@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 
+    PARAMETER_NULL_ERROR(1000, "the parameter can not be null", "参数不能为空"),
     USER_NOT_EXISTED_ERROR(1001, "the user is not existed", "用户不存在"),
     USERNAME_OR_PASSWD_ERROR(1002, "the username or password is error", "用户名或者密码错误");
 

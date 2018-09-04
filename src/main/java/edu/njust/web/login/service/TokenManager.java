@@ -1,6 +1,6 @@
 package edu.njust.web.login.service;
 
-import edu.njust.web.login.constant.Parameter;
+import edu.njust.web.login.constant.Parameters;
 import edu.njust.web.login.dto.UserToken;
 import edu.njust.web.login.util.CharUtil;
 import org.springframework.stereotype.Component;
@@ -12,10 +12,10 @@ import java.util.Map;
 @Component
 public class TokenManager {
 
-    public  Map<String, UserToken> tokenMap = new HashMap<>();
-    public  Map<Integer, UserToken> idMap = new HashMap<>();
+    private  static Map<String, UserToken> tokenMap = new HashMap<>();
+    private  static Map<Integer, UserToken> idMap = new HashMap<>();
 
-    public UserToken generateToken(Integer userId){
+    public static UserToken generateToken(Integer userId){
 
         String token = CharUtil.getRandomString(32);
         while (tokenMap.containsKey(token)) {
@@ -23,7 +23,7 @@ public class TokenManager {
         }
 
         LocalDateTime update = LocalDateTime.now();
-        LocalDateTime expire = update.plusMinutes(Parameter.tokenExpireTime);
+        LocalDateTime expire = update.plusMinutes(Parameters.tokenExpireTime);
 
         UserToken userToken = new UserToken();
         userToken = new UserToken();
@@ -35,5 +35,12 @@ public class TokenManager {
         idMap.put(userId, userToken);
 
         return userToken;
+    }
+
+    public static UserToken isTokenValid(String userToken){
+        if(tokenMap.containsKey(userToken)){
+            return tokenMap.get(userToken);
+        }
+        return null;
     }
 }
