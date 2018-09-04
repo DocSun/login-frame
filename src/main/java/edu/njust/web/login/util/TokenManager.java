@@ -1,4 +1,4 @@
-package edu.njust.web.login.service;
+package edu.njust.web.login.util;
 
 import edu.njust.web.login.constant.Parameters;
 import edu.njust.web.login.dto.UserToken;
@@ -37,10 +37,17 @@ public class TokenManager {
         return userToken;
     }
 
-    public static UserToken isTokenValid(String userToken){
-        if(tokenMap.containsKey(userToken)){
-            return tokenMap.get(userToken);
+    public static String getValidUserToken(String tokenString){
+        UserToken userToken = tokenMap.get(tokenString);
+        if(null == userToken){
+            return null;
         }
-        return null;
+
+        if(userToken.getExpireTime().isBefore(LocalDateTime.now())){
+            tokenMap.remove(tokenString);
+            return null;
+        }
+        return userToken.getToken();
     }
+
 }

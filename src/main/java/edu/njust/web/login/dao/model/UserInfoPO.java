@@ -18,5 +18,6 @@ public class UserInfoPO {
     private String mobile;
     private Integer sex;
     private String city;
+    private String lastLoginIp;
 
 }
