@@ -10,5 +10,8 @@
         <module name="LoginFrame" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="login-frame" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
