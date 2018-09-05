@@ -3,15 +3,15 @@ package edu.njust.web.login.service.impl;
 import edu.njust.web.login.dao.UserDao;
 import edu.njust.web.login.dao.model.UserInfoPO;
 import edu.njust.web.login.dto.UserInfoVO;
-import edu.njust.web.login.dto.UserToken;
+import edu.njust.web.login.manager.entity.UserToken;
 import edu.njust.web.login.errorcode.ErrorCode;
 import edu.njust.web.login.service.UserService;
-import edu.njust.web.login.util.TokenManager;
+import edu.njust.web.login.manager.TokenManager;
 import edu.njust.web.login.util.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
         userInfoVO.setUsername(userInfoPO.getUsername());
         userInfoVO.setMobile(userInfoPO.getMobile());
         userInfoVO.setSex(userInfoPO.getSex() == 0 ? '男': '女');
-        UserToken userToken = TokenManager.generateToken(userInfoPO.getUserId());
+        UserToken userToken = TokenManager.generateToken();
         userInfoVO.setToken(userToken.getToken());
         userInfoVO.setTokenExpireTime(userToken.getExpireTime().toString());
         return userInfoVO;
@@ -74,37 +74,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserInfoPO> queryByUsername(String username) {
-
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public List<UserInfoPO> queryByMobile(String mobile) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
-    public void register(String username, String password, String mobile) {
-
-        UserInfoPO user = new UserInfoPO();
-
-        String encodedPassword = bCryptPasswordEncoder.encode(password);
-        user.setPassword(encodedPassword);
-        user.setUsername(username);
-        user.setPassword(encodedPassword);
-        user.setMobile(mobile);
-        user.setLastLoginIp(IpUtil.client(request));
-//        user.setAddTime(LocalDateTime.now());
-        userDao.insertUser(user);
-
-
-        // userInfo
-        UserInfo userInfo = new UserInfo();
-        userInfo.setNickName(username);
-        userInfo.setAvatarUrl(user.getAvatar());
-
-        // token
-        UserToken userToken = UserTokenManager.generateToken(user.getId());
-
+    public UserInfoVO register(UserInfoPO userInfoPO) {
+        UserInfoVO userInfo = new UserInfoVO();
+        UserToken userToken = TokenManager.generateToken();
+        int num = userDao.insertUser(userInfoPO);
+        if(num > 0){
+            // userInfo
+            userInfo.setUsername(userInfoPO.getUsername());
+            userInfo.setSex(userInfoPO.getSex() == 0 ? '男' : '女');
+            userInfo.setMobile(userInfo.getMobile());
+            userInfo.setToken(userToken.getToken());
+            userInfo.setTokenExpireTime(userToken.getExpireTime().toString());
+            return userInfo;
+        }
+        userInfo.setCode(ErrorCode.INSERT_USER_TO_DB_ERROR.getCode());
+        userInfo.setErrmsg(ErrorCode.INSERT_USER_TO_DB_ERROR.getError());
+        return userInfo;
     }
 }

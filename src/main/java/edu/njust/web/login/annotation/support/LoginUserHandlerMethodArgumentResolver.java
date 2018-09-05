@@ -2,7 +2,7 @@ package edu.njust.web.login.annotation.support;
 
 import edu.njust.web.login.annotation.LoginUser;
 import edu.njust.web.login.constant.Parameters;
-import edu.njust.web.login.util.TokenManager;
+import edu.njust.web.login.manager.TokenManager;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;

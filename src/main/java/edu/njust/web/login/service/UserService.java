@@ -15,6 +15,6 @@ public interface UserService {
 
     public List<UserInfoPO> queryByMobile(String mobile);
 
-    public void register(String username, String password, String mobile);
+    public UserInfoVO register(UserInfoPO userInfoPO);
 
 }

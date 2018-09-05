@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserDao {
 
-    public void insertUser(UserInfoPO userInfoPO){
-
+    public int insertUser(UserInfoPO userInfoPO){
+        return 1;
     }
 }

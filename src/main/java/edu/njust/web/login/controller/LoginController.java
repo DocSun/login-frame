@@ -1,19 +1,22 @@
 package edu.njust.web.login.controller;
 
 import edu.njust.web.login.annotation.LoginUser;
+import edu.njust.web.login.dao.model.UserInfoPO;
 import edu.njust.web.login.dto.UserInfoVO;
 import edu.njust.web.login.errorcode.ErrorCode;
+import edu.njust.web.login.manager.CaptchaCodeManager;
 import edu.njust.web.login.service.UserService;
 import edu.njust.web.login.util.JacksonUtil;
 import edu.njust.web.login.util.RegexUtil;
 import edu.njust.web.login.util.ResponseUtil;
-import edu.njust.web.login.util.TokenManager;
+import edu.njust.web.login.manager.TokenManager;
 import edu.njust.web.login.util.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,9 +24,6 @@ public class LoginController {
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    TokenManager tokenManager;
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -49,12 +49,21 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody String body,, HttpServletRequest request) {
+    public String register(@RequestBody String body, HttpServletRequest request) {
 
         String username = JacksonUtil.parseString(body, "username");
         String password = JacksonUtil.parseString(body, "password");
         String mobile = JacksonUtil.parseString(body, "mobile");
         String code = JacksonUtil.parseString(body, "code");
+        Integer sex = JacksonUtil.parseInteger(body, "sex");
+        String city = JacksonUtil.parseString(body, "city");
+
+        UserInfoPO userInfoPO = new UserInfoPO();
+        userInfoPO.setPassword(bCryptPasswordEncoder.encode(password));
+        userInfoPO.setUsername(username);
+        userInfoPO.setCity(city);
+        userInfoPO.setMobile(mobile);
+        userInfoPO.setSex(sex);
 
         if (null == username || username.isEmpty() || null == password || password.isEmpty()
                 || RegexUtil.isMobileExact(mobile) || null == code || code.isEmpty()) {
@@ -62,29 +71,22 @@ public class LoginController {
         }
 
 
-        List<LitemallUser> userList = userService.queryByUsername(username);
+        List<UserInfoPO> userList = userService.queryByUsername(username);
         if (userList.size() > 0) {
-            return ResponseUtil.fail(403, "用户名已注册");
+            return ResponseUtil.failed(ErrorCode.REGIST_USESRNAME_EXISTED_ERROR.getCode(), ErrorCode.REGIST_USESRNAME_EXISTED_ERROR.getError());
         }
 
         userList = userService.queryByMobile(mobile);
         if (userList.size() > 0) {
-            return ResponseUtil.fail(403, "手机号已注册");
+            return ResponseUtil.failed(ErrorCode.REGIST_MOBILE_EXISTED_ERROR.getCode(), ErrorCode.REGIST_MOBILE_EXISTED_ERROR.getError());
         }
-        if (!RegexUtil.isMobileExact(mobile)) {
-            return ResponseUtil.fail(403, "手机号格式不正确");
-        }
+
         //判断验证码是否正确
         String cacheCode = CaptchaCodeManager.getCachedCaptcha(mobile);
         if (cacheCode == null || cacheCode.isEmpty() || !cacheCode.equals(code))
-            return ResponseUtil.fail(403, "验证码错误");
-
-
-        Map<Object, Object> result = new HashMap<Object, Object>();
-        result.put("token", userToken.getToken());
-        result.put("tokenExpire", userToken.getExpireTime().toString());
-        result.put("userInfo", userInfo);
-        return ResponseUtil.ok(result);
+            return ResponseUtil.failed(ErrorCode.CACHECODE_ERROR.getCode(), ErrorCode.CACHECODE_ERROR.getError());
+        UserInfoVO userInfoVO = userService.register(userInfoPO);
+        return userInfoVO.getCode() == 0 ? ResponseUtil.ok(userInfoVO) : ResponseUtil.failed(userInfoVO.getCode(), userInfoVO.getErrmsg());
     }
 
 }

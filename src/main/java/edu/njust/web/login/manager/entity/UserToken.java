@@ -1,4 +1,4 @@
-package edu.njust.web.login.dto;
+package edu.njust.web.login.manager.entity;
 
 import lombok.Data;
 import lombok.Getter;
