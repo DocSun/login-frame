@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
         userInfoVO.setUsername(userInfoPO.getUsername());
         userInfoVO.setMobile(userInfoPO.getMobile());
         userInfoVO.setSex(userInfoPO.getSex() == 0 ? '男': '女');
-        UserToken userToken = TokenManager.generateToken();
+        UserToken userToken = TokenManager.generateToken(userInfoPO.getUserId());
         userInfoVO.setToken(userToken.getToken());
         userInfoVO.setTokenExpireTime(userToken.getExpireTime().toString());
         return userInfoVO;
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoVO register(UserInfoPO userInfoPO) {
         UserInfoVO userInfo = new UserInfoVO();
-        UserToken userToken = TokenManager.generateToken();
+        UserToken userToken = TokenManager.generateToken(userInfoPO.getUserId());
         int num = userDao.insertUser(userInfoPO);
         if(num > 0){
             // userInfo

@@ -11,6 +11,6 @@ public class UserInfoVO {
     private String mobile;
     private String token;
     private String tokenExpireTime;
-    private Integer code;
+    private int code;
     private String errmsg;
 }

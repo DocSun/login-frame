@@ -42,10 +42,10 @@ public class LoginController {
         return ResponseUtil.ok(userInfoVO);
     }
 
-    @GetMapping("/token")
-    public String test(@LoginUser String token, String name) {
-        System.out.println(token + "    " + name);
-        return token;
+    @GetMapping("/token/next")
+    public String test(@LoginUser Integer userId, String name) {
+        System.out.println(userId + "    " + name);
+        return String.valueOf(userId);
     }
 
     @PostMapping("/register")
