@@ -5,7 +5,7 @@ import java.util.Random;
 public class CharUtil {
 
     public static String getRandomString(Integer num) {
-        String base = "abcdefghijklmnopqrstuvwxyz0123456789";
+        String base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random random = new Random();
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < num; i++) {

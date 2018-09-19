@@ -15,12 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-public class LoginController {
+public class TokenLoginController {
 
     @Autowired
     UserService userService;
@@ -28,7 +29,7 @@ public class LoginController {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @RequestMapping("/login")
+    @RequestMapping("/login/token")
     public String login(String username, String password) {
 
         if (null == username || username.isEmpty() || null == password || password.isEmpty()) {
@@ -42,7 +43,7 @@ public class LoginController {
         return ResponseUtil.ok(userInfoVO);
     }
 
-    @GetMapping("/token/next")
+    @GetMapping("/test")
     public String test(@LoginUser Integer userId, String name) {
         System.out.println(userId + "    " + name);
         return String.valueOf(userId);

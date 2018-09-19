@@ -20,8 +20,8 @@ public class UserLoginFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        System.out.println("过滤器实现");
         filterChain.doFilter(request, response);
+        System.out.println("过滤器-----after---");
     }
 
     @Override
